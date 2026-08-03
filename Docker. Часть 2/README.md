@@ -216,6 +216,62 @@ volumes:
 
 ---
 
+### Решение 5
+
+docker-compose.yaml
+
+```
+version: '3'
+
+services:
+    prometheus:
+      image: prom/prometheus:v3.13.2
+      container_name: oparinad-netology-prometheus
+      ports: 
+        - "9090:9090"
+      volumes:
+        - ./prometheus:/etc/prometheus #	Монтирует вашу локальную папку ./prometheus внутрь контейнера. Данные хранятся на хосте.
+        - prometheus-data:/prometheus  #  Docker управляет томом сам. Данные хранятся в системной папке Docker - /var/lib/docker/volumes/
+      networks:
+        - oparinad-my-netology-hw
+    
+    pushgateway:
+      container_name: oparinad-netology-pushgateway
+      image: prom/pushgateway:v1.11.3
+      ports:
+        - "9091:9091"
+      networks:
+      - oparinad-my-netology-hw
+
+    grafana:
+      container_name: oparinad-netology-grafana
+      image: grafana/grafana:12.4.6
+      ports:
+        - "80:3000"
+      volumes:
+        - ./grafana/grafana.ini:/etc/grafana/grafana.ini 
+      networks:
+        - oparinad-my-netology-hw
+
+
+      
+
+networks:
+  oparinad-my-netology-hw:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+
+
+volumes:
+    prometheus-data:
+    grafana-data:
+
+```
+---
+
 ### Задание 6 
 
 **Выполните действия.**
@@ -226,6 +282,68 @@ volumes:
 5. Запустите сценарий в detached режиме.
 
 ---
+
+### Решение 6
+
+docker-compose.yaml
+
+```
+version: '3'
+
+services:
+    prometheus:
+      image: prom/prometheus:v3.13.2
+      container_name: oparinad-netology-prometheus
+      ports: 
+        - "9090:9090"
+      volumes:
+        - ./prometheus:/etc/prometheus #	Монтирует вашу локальную папку ./prometheus внутрь контейнера. Данные хранятся на хосте.
+        - prometheus-data:/prometheus  #  Docker управляет томом сам. Данные хранятся в системной папке Docker - /var/lib/docker/volumes/
+      restart: always
+      networks:
+        - oparinad-my-netology-hw
+    
+    pushgateway:
+      container_name: oparinad-netology-pushgateway
+      image: prom/pushgateway:v1.11.3
+      depends_on: 
+        - prometheus # Запустить только после prometheus
+      restart: unless-stopped # no	Никогда не перезапускать (по умолчанию); always	Всегда перезапускать, даже если остановить вручную (кроме случая docker stop); unless-stopped	✅ Перезапускать всегда, ЕСЛИ только ты сам не остановил его вручную (docker stop); on-failure	Перезапускать только если контейнер упал с ошибкой (код возврата != 0)
+      ports:
+        - "9091:9091"
+      networks:
+      - oparinad-my-netology-hw
+
+    grafana:
+      container_name: oparinad-netology-grafana
+      image: grafana/grafana:12.4.6
+      depends_on: 
+        - pushgateway
+      restart: unless-stopped
+      ports:
+        - "80:3000"
+      volumes:
+        - ./grafana/grafana.ini:/etc/grafana/grafana.ini 
+      networks:
+        - oparinad-my-netology-hw
+
+
+      
+
+networks:
+  oparinad-my-netology-hw:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+
+
+volumes:
+    prometheus-data:
+    grafana-data:
+
+```
 
 ### Задание 7 
 
@@ -242,6 +360,11 @@ volumes:
 * скриншот графика, постоенного на основе вашей метрики.
 
 ---
+
+### Решение 7
+
+<img width="1587" height="795" alt="image" src="https://github.com/user-attachments/assets/c7915285-c11c-4f2b-bc15-81436f04829a" />
+
 
 ### Задание 8
 
