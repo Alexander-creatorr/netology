@@ -56,7 +56,8 @@
 ---
 
 ### Решение 2 
-```version: '3'
+```
+version: '3'
 services:
 
 volumes:
@@ -70,7 +71,7 @@ networks:
           gateway: 10.5.0.1
 ```
 
-
+---
 
 
 ### Задание 3 
