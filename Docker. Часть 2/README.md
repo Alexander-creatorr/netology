@@ -163,6 +163,48 @@ scrape_configs:
 
 ---
 
+### Решение 4
+
+docker-compose.yaml
+
+```
+version: '3'
+
+services:
+    prometheus:
+      image: prom/prometheus:v3.13.2
+      container_name: oparinad-netology-prometheus
+      ports: 
+        - "9090:9090"
+      volumes:
+        - ./prometheus:/etc/prometheus #	Монтирует вашу локальную папку ./prometheus внутрь контейнера. Данные хранятся на хосте.
+        - prometheus-data:/prometheus  #  Docker управляет томом сам. Данные хранятся в /var/lib/docker/volumes/
+      networks:
+        - oparinad-my-netology-hw
+    
+    pushgateway:
+      container_name: oparinad-netology-pushgateway
+      image: prom/pushgateway:v1.11.3
+      ports:
+        - "9091:9091"
+      networks:
+      - oparinad-my-netology-hw
+      
+
+networks:
+  oparinad-my-netology-hw:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+
+
+volumes:
+    prometheus-data:
+
+```
+
 ### Задание 5 
 
 **Выполните действия:** 
