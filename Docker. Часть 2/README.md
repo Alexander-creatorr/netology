@@ -56,6 +56,22 @@
 ---
 
 ### Решение 2 
+```version: '3'
+services:
+
+volumes:
+
+networks:
+  oparinad-my-netology-hw:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+```
+
+
+
 
 ### Задание 3 
 
