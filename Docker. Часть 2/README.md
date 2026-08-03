@@ -85,7 +85,9 @@ networks:
 ---
 
 Решение 3
+
 docker-compose.yaml
+
 ```
 version: '3'
 
@@ -150,6 +152,7 @@ scrape_configs:
     static_configs:
       - targets: ["pushgateway:9091"]
 ```
+---
 
 ### Задание 4 
 
