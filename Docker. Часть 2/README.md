@@ -439,7 +439,9 @@ volumes:
 
 ### Решение 9
 
+
 <img width="968" height="215" alt="image" src="https://github.com/user-attachments/assets/61aef79b-7697-43c6-a845-4e813472de05" />
+
 
 ---
 
