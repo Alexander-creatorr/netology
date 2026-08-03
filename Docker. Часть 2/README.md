@@ -84,6 +84,73 @@ networks:
 
 ---
 
+Решение 3
+docker-compose.yaml
+```
+version: '3'
+
+services:
+    oparinad-netology-prometheus:
+      image: prom/prometheus:v3.13.2
+      container_name: prometheus-v3.13.2
+      ports: 
+        - "9090:9090"
+      volumes:
+        - ./prometheus:/etc/prometheus #	Монтирует вашу локальную папку ./prometheus внутрь контейнера. Данные хранятся на хосте.
+        - prometheus-data:/prometheus  #  Docker управляет томом сам. Данные хранятся в /var/lib/docker/volumes/
+      networks:
+        - oparinad-my-netology-hw
+    
+networks:
+  oparinad-my-netology-hw:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+
+
+volumes:
+    prometheus-data:
+```
+
+prometheus.yml
+
+```
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  # - job_name: "docker-server"
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+  #   static_configs:
+  #     - targets: ["172.17.0.1:9100"]
+
+  - job_name: 'pushgateway'
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+```
+
 ### Задание 4 
 
 **Выполните действия:**
